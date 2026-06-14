@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20-Week Pull-Up & Gym Plan</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3350;
+    --accent: #4f8ef7;
+    --accent-dim: #1e3a6e;
+    --green: #3ecf8e;
+    --green-dim: #133d2b;
+    --amber: #f5a623;
+    --amber-dim: #3d2a0a;
+    --red: #f76f6f;
+    --text: #e8eaf0;
+    --text-muted: #7a80a0;
+    --text-dim: #4a5070;
+    --radius: 10px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+  }
+
+  header {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header-left h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .header-left .sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+  .progress-bar-wrap { flex: 1; max-width: 360px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-muted); margin-bottom: 5px;
+  }
+  .progress-bar {
+    height: 6px; background: var(--surface2);
+    border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .header-right { display: flex; gap: 8px; }
+  .tab-btn {
+    padding: 7px 16px; border-radius: 7px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-muted); font-size: 13px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .tab-btn:hover { background: var(--surface2); color: var(--text); }
+  .tab-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+  nav { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 16px 0; }
+
+  .phase-group { margin-bottom: 4px; }
+  .phase-header {
+    padding: 8px 18px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text-dim); user-select: none;
+  }
+
+  .week-btn {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 9px 18px;
+    background: transparent; border: none;
+    color: var(--text-muted); font-size: 13px;
+    cursor: pointer; text-align: left;
+    transition: all 0.12s; position: relative;
+  }
+  .week-btn:hover { background: var(--surface2); color: var(--text); }
+  .week-btn.active { background: var(--accent-dim); color: var(--accent); }
+  .week-btn.active::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--accent); border-radius: 0 2px 2px 0;
+  }
+
+  .week-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700;
+  }
+  .dot-empty { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+  .dot-partial { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber); }
+  .dot-done { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+  .dot-recovery { background: var(--accent-dim); border: 1px solid var(--accent); }
+  .dot-test { background: #3d1414; color: #f79090; border: 1px solid var(--red); }
+
+  main { overflow-y: auto; padding: 28px; }
+
+  .week-view { display: none; }
+  .week-view.visible { display: block; }
+
+  .week-header { margin-bottom: 24px; }
+  .week-header h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .week-phase-tag {
+    display: inline-block; padding: 2px 10px;
+    border-radius: 99px; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.5px; margin-left: 10px; vertical-align: middle;
+  }
+  .tag-phase1 { background: #1e3464; color: #7aabf7; }
+  .tag-phase2 { background: #1e3d2a; color: #5ddba0; }
+  .tag-phase3 { background: #3d2a0a; color: #f5b843; }
+  .tag-phase4 { background: #3d1414; color: #f79090; }
+  .tag-recovery { background: #2a2a3d; color: #9090d0; }
+
+  .week-desc { margin-top: 6px; color: var(--text-muted); font-size: 13px; }
+  .week-volume { margin-top: 4px; font-size: 12px; color: var(--text-dim); }
+
+  .workout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .workout-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .workout-card.completed {
+    border-color: var(--green);
+    background: linear-gradient(135deg, var(--surface), #0d2a1e);
+  }
+  .workout-card.completed .card-day { color: var(--green); }
+
+  .card-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px; gap: 12px;
+  }
+
+  .card-day {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .complete-btn {
+    flex-shrink: 0; padding: 5px 12px;
+    border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text-muted);
+    font-size: 12px; cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .complete-btn:hover { border-color: var(--green); color: var(--green); }
+  .complete-btn.done {
+    background: var(--green-dim); border-color: var(--green); color: var(--green);
+  }
+
+  .card-pullup-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  .card-pullup-content {
+    font-size: 14px; font-weight: 600; line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .card-pullup-detail {
+    font-size: 12px; color: var(--text-dim);
+    font-style: italic; margin-bottom: 12px;
+  }
+
+  .card-lifts-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted); letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    padding-top: 12px; margin-bottom: 8px;
+  }
+  .card-lifts-list {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4px 12px; font-size: 12px; color: var(--text-muted);
+  }
+  .card-lifts-list div::before {
+    content: '·'; margin-right: 6px; color: var(--text-dim);
+  }
+
+  .card-completion-info {
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .check-icon { color: var(--green); font-size: 14px; }
+
+  .card-log-preview {
+    margin-top: 8px; font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border-radius: 6px; padding: 8px 10px;
+    line-height: 1.5; white-space: pre-wrap;
+    border-left: 3px solid var(--green);
+    max-height: 110px; overflow-y: auto;
+  }
+
+  .card-actions {
+    margin-top: 10px; display: flex; gap: 8px;
+  }
+  .card-action-btn {
+    padding: 4px 10px; border-radius: 5px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-muted); font-size: 11px;
+    cursor: pointer; transition: all 0.12s;
+  }
+  .card-action-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .milestone-box {
+    background: var(--amber-dim); border: 1px solid var(--amber);
+    border-radius: var(--radius); padding: 14px 18px;
+    margin-bottom: 20px; display: flex;
+    align-items: flex-start; gap: 12px;
+  }
+  .milestone-icon { font-size: 18px; flex-shrink: 0; }
+  .milestone-text { font-size: 13px; color: #f5c670; }
+
+  /* Reference */
+  .ref-section { display: none; }
+  .ref-section.visible { display: block; }
+  .ref-header { margin-bottom: 24px; }
+  .ref-header h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .ref-header p { margin-top: 6px; color: var(--text-muted); font-size: 13px; }
+
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+
+  .ref-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px;
+  }
+  .ref-card h3 {
+    font-size: 13px; font-weight: 700; color: var(--accent);
+    margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .rule-item {
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px; color: var(--text-muted); line-height: 1.5;
+  }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-num { font-weight: 700; color: var(--text); margin-right: 6px; }
+
+  .milestones-list { display: grid; gap: 10px; }
+  .milestone-row {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 18px;
+    display: flex; gap: 14px; align-items: center; font-size: 13px;
+  }
+  .ms-week {
+    font-size: 11px; font-weight: 700;
+    color: var(--accent); white-space: nowrap; min-width: 64px;
+  }
+  .ms-target { color: var(--text-muted); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
+    z-index: 100;
+    align-items: flex-start; justify-content: center;
+    overflow-y: auto; padding: 30px 16px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px;
+    width: 100%; max-width: 640px;
+    box-shadow: var(--shadow);
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
+
+  .modal-section-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--accent); margin-bottom: 8px; margin-top: 16px;
+  }
+  .modal-section-title:first-of-type { margin-top: 0; }
+
+  .modal-prescribed {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px; line-height: 1.5;
+    margin-bottom: 12px;
+    white-space: pre-line;
+  }
+
+  .modal-date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .modal-date-row label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .modal-date-row input[type=date] {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 7px; padding: 7px 12px;
+    color: var(--text); font-size: 13px; flex: 1;
+    outline: none; transition: border-color 0.15s;
+  }
+  .modal-date-row input:focus { border-color: var(--accent); }
+
+  textarea, input[type=text] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text); font-size: 13px;
+    font-family: inherit; line-height: 1.5;
+    outline: none; transition: border-color 0.15s;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  textarea:focus, input[type=text]:focus { border-color: var(--accent); }
+  textarea::placeholder, input::placeholder { color: var(--text-dim); }
+
+  .lift-row {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: var(--surface2);
+  }
+  .lift-row-name {
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .lift-row-meta {
+    font-size: 11px; color: var(--text-dim);
+    font-weight: 400; font-style: italic;
+  }
+  .lift-row-fields {
+    display: grid;
+    grid-template-columns: 80px 80px 90px 1fr;
+    gap: 6px;
+    align-items: center;
+  }
+  .lift-row-fields input[type=text] {
+    padding: 6px 8px; font-size: 12px;
+  }
+  .lift-row-fields input.notes-input {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .lift-row-fields {
+      grid-template-columns: 1fr 1fr;
+    }
+    .lift-row-fields input.notes-input {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .modal-footer {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 18px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .btn-cancel {
+    padding: 9px 18px; border-radius: 7px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-muted); font-size: 13px;
+    cursor: pointer; transition: all 0.12s;
+  }
+  .btn-cancel:hover { background: var(--surface2); color: var(--text); }
+  .btn-save {
+    padding: 9px 20px; border-radius: 7px;
+    border: none; background: var(--green);
+    color: #0a2018; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.12s;
+  }
+  .btn-save:hover { opacity: 0.88; }
+  .btn-undo {
+    padding: 9px 18px; border-radius: 7px;
+    border: 1px solid var(--red); background: transparent;
+    color: var(--red); font-size: 13px;
+    cursor: pointer; transition: all 0.12s;
+    margin-right: auto;
+  }
+  .btn-undo:hover { background: rgba(247,111,111,0.1); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; }
+    nav { display: none; }
+    main { padding: 16px; }
+    .workout-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <header>
+    <div class="header-left">
+      <h1>20-Week Pull-Up & Gym Plan</h1>
+      <div class="sub">2 sessions / week · Tue (heavy) & Wed (light) · Target: 15 strict reps</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span id="progress-text">0 / 40 sessions completed</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="header-right">
+      <button class="tab-btn active" onclick="showTab('plan')">Plan</button>
+      <button class="tab-btn" onclick="showTab('reference')">Reference</button>
+    </div>
+  </header>
+
+  <nav id="sidebar"></nav>
+  <main id="main-content"></main>
+
+</div>
+
+<!-- Log Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Log Session</div>
+    <div class="modal-subtitle" id="modal-subtitle"></div>
+
+    <div class="modal-date-row">
+      <label>Date completed</label>
+      <input type="date" id="modal-date">
+    </div>
+
+    <div class="modal-section-title">Pull-Up Work (Prescribed)</div>
+    <div class="modal-prescribed" id="modal-pullup-prescribed"></div>
+    <textarea id="modal-pullup-notes" placeholder="Pull-up notes — actual sets/reps achieved, form quality, hollow body, any chest-to-bar contact, fatigue..."></textarea>
+
+    <div class="modal-section-title">Accessory Lifts</div>
+    <div id="modal-lifts-container"></div>
+
+    <div class="modal-section-title">Overall Notes</div>
+    <textarea id="modal-overall-notes" placeholder="How did the session feel? Energy, soreness, sleep, anything to flag for next time..."></textarea>
+
+    <div class="modal-footer">
+      <button class="btn-undo" id="btn-undo" onclick="undoComplete()" style="display:none">Undo Complete</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveLog()">Mark Complete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Plan Data ────────────────────────────────────────────────────────────────
+
+const PHASES = [
+  { id: 1, name: 'Phase 1', label: 'Foundation', weeks: [1,2,3,4],
+    focus: 'Scaps, hollow body, dead hangs. Fix the leaks before adding pull-up load.' },
+  { id: 2, name: 'Phase 2', label: 'Volume Base', weeks: [5,6,7,8,9,10],
+    focus: 'Submaximal sets accumulate total reps without burning out elbows. Hollow body non-negotiable on every rep. Week 10 is a recovery week.' },
+  { id: 3, name: 'Phase 3', label: 'Strength & C2B', weeks: [11,12,13,14,15,16],
+    focus: 'Weighted pull-ups, slow tempo work, and the first chest-to-bar progressions. Week 16 is a recovery week.' },
+  { id: 4, name: 'Phase 4', label: 'Peaking', weeks: [17,18,19,20],
+    focus: 'Heavy singles/doubles, fewer total sets, longer rest. Express the strength built in Phase 3 as one long set. Week 20 is test week.' },
+];
+
+const ACCESSORY_LIFTS = [
+  { key: 'squat', name: 'Squat', meta: '2 sets · 8–12 reps · RPE 6–7' },
+  { key: 'rdl', name: 'RDL', meta: '2 sets · 8–12 reps · RPE 6–7' },
+  { key: 'dips', name: 'Dips', meta: '2 sets · 8–12 reps · RPE 6–7' },
+  { key: 'shoulder_press', name: 'Shoulder Press', meta: '2 sets · 8–12 reps · RPE 6–7' },
+  { key: 'bicep_curl', name: 'Bicep Curl', meta: '2 sets · 10–15 reps · RPE 7' },
+  { key: 'underhand_curl', name: 'Underhand Curl', meta: '2 sets · 10–15 reps · RPE 7' },
+  { key: 'tricep_ext', name: 'Tricep Extension', meta: '2 sets · 10–15 reps · RPE 7' },
+  { key: 'tricep_pd', name: 'Tricep Pushdown', meta: '2 sets · 10–15 reps · RPE 7' },
+  { key: 'forearm', name: 'Forearm Curl + Extension', meta: '2 sets each · 12–20 reps' },
+];
+
+const WEEKS = {
+  1: { title: 'Week 1', subtitle: 'Diagnostic & rebuild', phase: 1, recovery: false,
+    milestone: 'Confirm baseline max on Tuesday. Build dead-hang and scap-pull capacity.',
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: 'TEST: 1 × max strict reps. Then 3 × 25 sec dead hang; 3 × 5 scap pulls; 3 × 3 strict pull-ups',
+        pullupDetail: 'Log the test max in pull-up notes.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '3 × 20 sec hollow hold; 3 × 5 scap pulls; 3 × 3 strict pull-ups',
+        pullupDetail: 'Run first, gym after.', lifts: true },
+    ]},
+  2: { title: 'Week 2', subtitle: 'Low-intensity volume', phase: 1, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '3 × 25 sec dead hang; 3 × 8 scap pulls; 5 × 3 strict pull-ups',
+        pullupDetail: '2 min rest between pull-up sets.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '3 × 25 sec hollow hold; 4 × 6 sec slow eccentric (5 sec down); 3 × 3 strict pull-ups',
+        pullupDetail: '', lifts: true },
+    ]},
+  3: { title: 'Week 3', subtitle: 'First sub-max sets', phase: 1, recovery: false,
+    milestone: 'Target: 30 sec dead hang; hollow body held cleanly for 25 sec.',
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '5 × 4 strict pull-ups (2 min rest); 3 × 30 sec hollow hold',
+        pullupDetail: '~65% of max. Stop a set on the first failed rep.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 3 strict pull-ups; 4 × 5 sec eccentric; 3 × 8 scap pulls',
+        pullupDetail: 'Eccentrics start from chin-over-bar.', lifts: true },
+    ]},
+  4: { title: 'Week 4', subtitle: 'Phase 1 peak', phase: 1, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '6 × 4 strict pull-ups',
+        pullupDetail: '', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 4 strict pull-ups; 4 × 6 sec eccentric; 3 × 40 sec hollow hold',
+        pullupDetail: '', lifts: true },
+    ]},
+  5: { title: 'Week 5', subtitle: 'Build sub-max volume', phase: 2, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '5 × 5 strict pull-ups',
+        pullupDetail: '2–3 min rest. Every rep clean.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 4 strict pull-ups; 4 × 45 sec hollow hold',
+        pullupDetail: '', lifts: true },
+    ]},
+  6: { title: 'Week 6', subtitle: 'First retest', phase: 2, recovery: false,
+    milestone: 'First retest. Expected: 8–9 strict reps. If under, repeat Week 5.',
+    workouts: [
+      { day: 'Tuesday', label: 'Test day',
+        pullup: 'TEST: 1 × max strict reps. Then 2 × 4 strict, easy.',
+        pullupDetail: 'Log the new max. Anchor working sets going forward to this number.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 5 strict pull-ups; 4 × 6 sec eccentric',
+        pullupDetail: '', lifts: true },
+    ]},
+  7: { title: 'Week 7', subtitle: 'More working sets', phase: 2, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '6 × 5 strict pull-ups',
+        pullupDetail: '', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 5 strict pull-ups; 4 × 45 sec hollow hold',
+        pullupDetail: '', lifts: true },
+    ]},
+  8: { title: 'Week 8', subtitle: 'Longer working sets', phase: 2, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '5 × 6 strict pull-ups',
+        pullupDetail: '', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 5 strict pull-ups; 4 × 8 sec eccentric',
+        pullupDetail: '', lifts: true },
+    ]},
+  9: { title: 'Week 9', subtitle: 'Peak volume of phase', phase: 2, recovery: false,
+    milestone: 'Target: 6 × 6 strict pull-ups across the session, all clean.',
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '6 × 6 strict pull-ups',
+        pullupDetail: '', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 6 strict pull-ups; 5 × 45 sec hollow hold',
+        pullupDetail: '', lifts: true },
+    ]},
+  10: { title: 'Week 10', subtitle: 'Recovery week', phase: 2, recovery: true,
+    milestone: 'Recovery week. No elbow grumbles. Drop accessories to 1 working set each.',
+    workouts: [
+      { day: 'Tuesday', label: 'Recovery',
+        pullup: '4 × 4 strict pull-ups',
+        pullupDetail: 'Accessories: 1 working set each.', lifts: true },
+      { day: 'Wednesday', label: 'Recovery',
+        pullup: '3 × 4 strict pull-ups; 3 × 30 sec hollow hold',
+        pullupDetail: 'Accessories: 1 working set each.', lifts: true },
+    ]},
+  11: { title: 'Week 11', subtitle: 'Introduce weighted', phase: 3, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '5 × 3 weighted pull-ups (start 5 lb); then 2 × 5 strict unweighted',
+        pullupDetail: 'Add 2.5–5 lb only when reps are crisp.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 6 strict pull-ups; 4 × 60 sec hollow hold',
+        pullupDetail: '', lifts: true },
+    ]},
+  12: { title: 'Week 12', subtitle: 'Tempo + first C2B', phase: 3, recovery: false,
+    milestone: 'First chest-to-bar contact (band-assisted is fine).',
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '5 × 3 weighted pull-ups; 3 × high-pull holds (pull to chest, 5 sec hold × 3 reps)',
+        pullupDetail: 'High-pull holds build C2B end-range.', lifts: true },
+      { day: 'Wednesday', label: 'C2B day',
+        pullup: '5 × 2 chest-to-bar with band assist; 3 × 8 sec eccentric from C2B position',
+        pullupDetail: 'First real C2B contact. Form > load.', lifts: true },
+    ]},
+  13: { title: 'Week 13', subtitle: 'Heavier weighted work', phase: 3, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '5 × 4 weighted pull-ups',
+        pullupDetail: 'Add load if last week was crisp.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 7 strict pull-ups; 4 × 2 C2B (band assist)',
+        pullupDetail: '', lifts: true },
+    ]},
+  14: { title: 'Week 14', subtitle: 'Second retest', phase: 3, recovery: false,
+    milestone: 'Second retest. Expected: 11–12 strict reps. If under, repeat Week 13.',
+    workouts: [
+      { day: 'Tuesday', label: 'Test day',
+        pullup: 'TEST: 1 × max strict reps. Then 2 × 5 strict, easy.',
+        pullupDetail: 'Log the new max.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 5 strict pull-ups; 4 × 2 C2B (try unassisted); 4 × 60 sec hollow hold',
+        pullupDetail: '', lifts: true },
+    ]},
+  15: { title: 'Week 15', subtitle: 'Strength consolidation', phase: 3, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '4 × 4 weighted pull-ups',
+        pullupDetail: '', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 7 strict pull-ups; 4 × 2 C2B (unassisted if possible)',
+        pullupDetail: '', lifts: true },
+    ]},
+  16: { title: 'Week 16', subtitle: 'Recovery week', phase: 3, recovery: true,
+    milestone: 'Recovery week. Drop accessories to 1 working set each.',
+    workouts: [
+      { day: 'Tuesday', label: 'Recovery',
+        pullup: '3 × 5 strict pull-ups',
+        pullupDetail: 'Accessories: 1 working set each.', lifts: true },
+      { day: 'Wednesday', label: 'Recovery',
+        pullup: '3 × 4 strict pull-ups; 3 × 45 sec hollow hold',
+        pullupDetail: 'Accessories: 1 working set each.', lifts: true },
+    ]},
+  17: { title: 'Week 17', subtitle: 'Cluster sets', phase: 4, recovery: false,
+    milestone: 'Target: 8 + 2 cluster with 20 sec rest, clean.',
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: 'CLUSTER: 4 sets of (8 reps, rest 20 sec, 2 more reps)',
+        pullupDetail: 'Trains the back end of a long set.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '5 × 5 strict pull-ups; 3 × 60 sec hollow hold',
+        pullupDetail: '3 min rest between sets.', lifts: true },
+    ]},
+  18: { title: 'Week 18', subtitle: 'Big working set', phase: 4, recovery: false,
+    milestone: 'Target: 3 × 10 strict pull-ups across a session.',
+    workouts: [
+      { day: 'Tuesday', label: 'Heavy day',
+        pullup: '3 × 10 strict pull-ups',
+        pullupDetail: 'Long sets — full 3 min rest.', lifts: true },
+      { day: 'Wednesday', label: 'Light day',
+        pullup: '4 × 3 weighted pull-ups; 4 × 2 C2B',
+        pullupDetail: '', lifts: true },
+    ]},
+  19: { title: 'Week 19', subtitle: 'Sharpen', phase: 4, recovery: false,
+    workouts: [
+      { day: 'Tuesday', label: 'Sharpening',
+        pullup: '4 × 5 strict pull-ups — crisp and fast',
+        pullupDetail: 'No grinders. Save it for test day.', lifts: true },
+      { day: 'Wednesday', label: 'Taper',
+        pullup: '2 × 8 strict pull-ups; 3 × 2 C2B; 4 × 60 sec hollow hold',
+        pullupDetail: 'Taper begins.', lifts: true },
+    ]},
+  20: { title: 'Week 20', subtitle: 'Test Week', phase: 4, recovery: true,
+    milestone: 'TEST WEEK — Target: 15 clean strict reps. Stretch: first 3 reps to chest-to-bar.',
+    workouts: [
+      { day: 'Tuesday', label: 'Activation',
+        pullup: '3 × 3 strict pull-ups — fast and clean',
+        pullupDetail: 'Skip squats & RDLs this day — keep it light. Wake up the pattern only.', lifts: true },
+      { day: 'Wednesday', label: 'Rest',
+        pullup: 'Rest or 2 × 30 sec hollow hold',
+        pullupDetail: 'Full recovery — skip gym entirely if you can.', lifts: false },
+      { day: 'Friday or Saturday', label: 'TEST DAY 🏁',
+        pullup: 'MAX STRICT PULL-UP TEST',
+        pullupDetail: 'Target: 15 clean reps. Stretch: first 3 reps to chest-to-bar.', lifts: false, isTest: true },
+    ]},
+};
+
+// ─── State ────────────────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'pullup_plan_v1';
+let logs = {};
+
+function loadLogs() {
+  try { logs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { logs = {}; }
+}
+function saveLogs() { localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); }
+function logKey(week, dayIndex) { return `w${week}_d${dayIndex}`; }
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+
+let modalCtx = null;
+
+function openModal(week, dayIndex) {
+  const wk = WEEKS[week];
+  const wo = wk.workouts[dayIndex];
+  const key = logKey(week, dayIndex);
+  const existing = logs[key];
+
+  modalCtx = { week, dayIndex, key, workout: wo };
+
+  document.getElementById('modal-title').textContent = existing ? 'Edit Session' : 'Log Session';
+  document.getElementById('modal-subtitle').textContent = `${wk.title} — ${wo.day} (${wo.label})`;
+  document.getElementById('modal-pullup-prescribed').textContent =
+    wo.pullup + (wo.pullupDetail ? '\n' + wo.pullupDetail : '');
+  document.getElementById('modal-pullup-notes').value = existing?.pullupNotes || '';
+  document.getElementById('modal-overall-notes').value = existing?.overallNotes || '';
+  document.getElementById('modal-date').value = existing?.date || new Date().toISOString().slice(0,10);
+  document.getElementById('btn-undo').style.display = existing ? 'block' : 'none';
+  document.querySelector('.btn-save').textContent = existing ? 'Save Changes' : 'Mark Complete';
+
+  // Render lifts
+  const container = document.getElementById('modal-lifts-container');
+  if (wo.lifts) {
+    container.style.display = 'block';
+    document.querySelectorAll('.modal-section-title').forEach(el => {
+      if (el.textContent === 'Accessory Lifts') el.style.display = 'block';
+    });
+    let html = '';
+    for (const lift of ACCESSORY_LIFTS) {
+      const data = existing?.lifts?.[lift.key] || {};
+      html += `<div class="lift-row">
+        <div class="lift-row-name">
+          ${escapeHtml(lift.name)}
+          <span class="lift-row-meta">${escapeHtml(lift.meta)}</span>
+        </div>
+        <div class="lift-row-fields">
+          <input type="text" id="lift-${lift.key}-sets" placeholder="Sets" value="${escapeHtml(data.sets || '')}">
+          <input type="text" id="lift-${lift.key}-reps" placeholder="Reps" value="${escapeHtml(data.reps || '')}">
+          <input type="text" id="lift-${lift.key}-weight" placeholder="Weight" value="${escapeHtml(data.weight || '')}">
+          <input type="text" class="notes-input" id="lift-${lift.key}-notes" placeholder="Notes" value="${escapeHtml(data.notes || '')}">
+        </div>
+      </div>`;
+    }
+    container.innerHTML = html;
+  } else {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    document.querySelectorAll('.modal-section-title').forEach(el => {
+      if (el.textContent === 'Accessory Lifts') el.style.display = 'none';
+    });
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-pullup-notes').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalCtx = null;
+}
+
+function saveLog() {
+  if (!modalCtx) return;
+  const entry = {
+    date: document.getElementById('modal-date').value,
+    pullupNotes: document.getElementById('modal-pullup-notes').value.trim(),
+    overallNotes: document.getElementById('modal-overall-notes').value.trim(),
+    completedAt: new Date().toISOString(),
+  };
+  if (modalCtx.workout.lifts) {
+    entry.lifts = {};
+    for (const lift of ACCESSORY_LIFTS) {
+      const sets = document.getElementById(`lift-${lift.key}-sets`).value.trim();
+      const reps = document.getElementById(`lift-${lift.key}-reps`).value.trim();
+      const weight = document.getElementById(`lift-${lift.key}-weight`).value.trim();
+      const notes = document.getElementById(`lift-${lift.key}-notes`).value.trim();
+      if (sets || reps || weight || notes) {
+        entry.lifts[lift.key] = { sets, reps, weight, notes };
+      }
+    }
+  }
+  logs[modalCtx.key] = entry;
+  saveLogs();
+  closeModal();
+  renderAll();
+}
+
+function undoComplete() {
+  if (!modalCtx) return;
+  if (!confirm('Remove this session log? You will lose the notes you entered.')) return;
+  delete logs[modalCtx.key];
+  saveLogs();
+  closeModal();
+  renderAll();
+}
+
+// ─── Rendering ────────────────────────────────────────────────────────────────
+
+let currentWeek = 1;
+let currentTab = 'plan';
+
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === tab));
+  renderMain();
+}
+
+function showWeek(week) {
+  currentWeek = week;
+  renderSidebar();
+  renderMain();
+}
+
+function getWeekStatus(week) {
+  const wk = WEEKS[week];
+  const total = wk.workouts.length;
+  const done = wk.workouts.filter((_, i) => logs[logKey(week, i)]).length;
+  if (done === 0) return 'empty';
+  if (done === total) return 'done';
+  return 'partial';
+}
+
+function getTotalProgress() {
+  let done = 0, total = 0;
+  for (let w = 1; w <= 20; w++) {
+    const wk = WEEKS[w];
+    total += wk.workouts.length;
+    done += wk.workouts.filter((_, i) => logs[logKey(w, i)]).length;
+  }
+  return { done, total };
+}
+
+function renderSidebar() {
+  const nav = document.getElementById('sidebar');
+  let html = '';
+  for (const ph of PHASES) {
+    html += `<div class="phase-group">
+      <div class="phase-header">Phase ${ph.id} — ${ph.label}</div>`;
+    for (const w of ph.weeks) {
+      const wk = WEEKS[w];
+      const status = getWeekStatus(w);
+      const isTestWeek = (w === 20);
+      const dotClass = isTestWeek ? 'dot-test' :
+                       wk.recovery ? 'dot-recovery' :
+                       status === 'done' ? 'dot-done' :
+                       status === 'partial' ? 'dot-partial' : 'dot-empty';
+      const dotLabel = status === 'done' ? '✓' : w;
+      html += `<button class="week-btn ${currentWeek === w && currentTab === 'plan' ? 'active' : ''}" onclick="showWeek(${w})">
+        <span class="week-dot ${dotClass}">${dotLabel}</span>
+        ${wk.title}${wk.recovery && !isTestWeek ? ' <span style="font-size:10px;opacity:0.6">↓</span>' : ''}${isTestWeek ? ' 🏁' : ''}
+      </button>`;
+    }
+    html += '</div>';
+  }
+  nav.innerHTML = html;
+}
+
+function renderMain() {
+  const main = document.getElementById('main-content');
+  if (currentTab === 'plan') {
+    main.innerHTML = renderWeekHTML(currentWeek);
+  } else {
+    main.innerHTML = renderReferenceHTML();
+  }
+  updateProgress();
+}
+
+function renderWeekHTML(week) {
+  const wk = WEEKS[week];
+  const phaseTag = ['', 'tag-phase1', 'tag-phase2', 'tag-phase3', 'tag-phase4'][wk.phase];
+  const ph = PHASES[wk.phase - 1];
+
+  let html = `<div class="week-view visible">
+    <div class="week-header">
+      <h2>${wk.title} — ${wk.subtitle}
+        <span class="week-phase-tag ${wk.recovery ? 'tag-recovery' : phaseTag}">${wk.recovery ? 'Recovery ↓' : ph.label}</span>
+      </h2>
+      <div class="week-desc">${ph.focus}</div>
+    </div>`;
+
+  if (wk.milestone) {
+    html += `<div class="milestone-box">
+      <div class="milestone-icon">${week === 20 ? '🏁' : '🎯'}</div>
+      <div class="milestone-text">${escapeHtml(wk.milestone)}</div>
+    </div>`;
+  }
+
+  html += '<div class="workout-grid">';
+  for (let i = 0; i < wk.workouts.length; i++) {
+    const wo = wk.workouts[i];
+    const key = logKey(week, i);
+    const entry = logs[key];
+    const done = !!entry;
+
+    html += `<div class="workout-card ${done ? 'completed' : ''}">
+      <div class="card-top">
+        <div class="card-day">${wo.day} · ${wo.label}</div>
+        <button class="complete-btn ${done ? 'done' : ''}" onclick="openModal(${week}, ${i})">
+          ${done ? '✓ Logged' : 'Log Session'}
+        </button>
+      </div>
+      <div class="card-pullup-title">${wo.isTest ? 'Test' : 'Pull-Up Work'}</div>
+      <div class="card-pullup-content">${escapeHtml(wo.pullup)}</div>
+      ${wo.pullupDetail ? `<div class="card-pullup-detail">${escapeHtml(wo.pullupDetail)}</div>` : ''}`;
+
+    if (wo.lifts) {
+      html += `<div class="card-lifts-title">Accessory Lifts (2 sets each)</div>
+        <div class="card-lifts-list">
+          ${ACCESSORY_LIFTS.map(l => `<div>${escapeHtml(l.name)}</div>`).join('')}
+        </div>`;
+    }
+
+    if (done) {
+      const dateStr = entry.date ? formatDate(entry.date) : '';
+      html += `<div class="card-completion-info">
+        <span class="check-icon">✓</span> Completed ${dateStr}
+      </div>`;
+      const preview = buildLogPreview(entry, wo);
+      if (preview) {
+        html += `<div class="card-log-preview">${escapeHtml(preview)}</div>`;
+      }
+      html += `<div class="card-actions">
+        <button class="card-action-btn" onclick="openModal(${week}, ${i})">Edit log</button>
+      </div>`;
+    }
+
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // Week nav
+  html += `<div style="display:flex;gap:10px;margin-top:8px;">`;
+  if (week > 1) html += `<button class="tab-btn" onclick="showWeek(${week-1})">← Week ${week-1}</button>`;
+  if (week < 20) html += `<button class="tab-btn" onclick="showWeek(${week+1})" style="margin-left:auto">Week ${week+1} →</button>`;
+  html += '</div></div>';
+  return html;
+}
+
+function buildLogPreview(entry, workout) {
+  const parts = [];
+  if (entry.pullupNotes) parts.push('Pull-ups: ' + entry.pullupNotes);
+  if (entry.lifts) {
+    const liftLines = [];
+    for (const lift of ACCESSORY_LIFTS) {
+      const d = entry.lifts[lift.key];
+      if (!d) continue;
+      const bits = [];
+      if (d.sets || d.reps) bits.push(`${d.sets || '?'}×${d.reps || '?'}`);
+      if (d.weight) bits.push(d.weight);
+      if (d.notes) bits.push(`(${d.notes})`);
+      if (bits.length) liftLines.push(`${lift.name}: ${bits.join(' ')}`);
+    }
+    if (liftLines.length) parts.push(liftLines.join('\n'));
+  }
+  if (entry.overallNotes) parts.push('Overall: ' + entry.overallNotes);
+  return parts.join('\n\n');
+}
+
+function renderReferenceHTML() {
+  return `<div class="ref-section visible">
+    <div class="ref-header">
+      <h2>Reference</h2>
+      <p>Goal, quality standard, lift template, safety rules, and milestones</p>
+    </div>
+
+    <div class="ref-grid">
+      <div class="ref-card">
+        <h3>Your Profile</h3>
+        <div class="rule-item"><span class="rule-num">Goal</span>15 strict pull-ups · chin over bar, hollow body, no kip</div>
+        <div class="rule-item"><span class="rule-num">Stretch</span>First 3 reps of test set to chest-to-bar</div>
+        <div class="rule-item"><span class="rule-num">Start</span>6 strict reps · weak hollow body · no C2B yet</div>
+        <div class="rule-item"><span class="rule-num">Days</span>Tue (heavy) + Wed (light) · run M/W/F</div>
+        <div class="rule-item"><span class="rule-num">Timeline</span>18–22 weeks (plan is 20)</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Quality Standard</h3>
+        <div class="rule-item"><span class="rule-num">1.</span>Dead-hang start · elbows extended · shoulders packed</div>
+        <div class="rule-item"><span class="rule-num">2.</span>Hollow body · ribs down · legs together and slightly in front</div>
+        <div class="rule-item"><span class="rule-num">3.</span>Chin clearly over bar</div>
+        <div class="rule-item"><span class="rule-num">4.</span>Controlled ~2 sec descent</div>
+        <div class="rule-item"><span class="rule-num">5.</span>No kip · no bottom bounce</div>
+        <div class="rule-item" style="color:var(--amber)">A failed rep does not count. Stop the set on first failure.</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Tue + Wed Back-to-Back</h3>
+        <div class="rule-item">Tue = heavy pull-up day (weighted, eccentrics, C2B)</div>
+        <div class="rule-item">Wed = lighter pull-up day (sub-max, grease the groove)</div>
+        <div class="rule-item">On Wed: run first, gym second — don't fry grip before a run</div>
+        <div class="rule-item">If elbows complain, move Wed gym → Fri after the run</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Bicep Stack Watch-out</h3>
+        <div class="rule-item">Pull-ups + curls + underhand curls = lots of elbow flexor load</div>
+        <div class="rule-item">If medial elbow ("golfer's elbow") barks:</div>
+        <div class="rule-item"><span class="rule-num">1.</span>Cut underhand curls first</div>
+        <div class="rule-item"><span class="rule-num">2.</span>Then drop bicep curls to 1 set</div>
+        <div class="rule-item"><span class="rule-num">3.</span>Only then touch pull-up volume</div>
+      </div>
+    </div>
+
+    <div class="ref-card" style="margin-bottom:16px;">
+      <h3>Lift Order (Every Gym Day)</h3>
+      <div class="rule-item"><span class="rule-num">1.</span>Pull-up work (while fresh — it's the goal)</div>
+      <div class="rule-item"><span class="rule-num">2.</span>Squat — 2 working sets, 8–12 reps, RPE 6–7</div>
+      <div class="rule-item"><span class="rule-num">3.</span>RDL — 2 working sets, 8–12 reps, RPE 6–7</div>
+      <div class="rule-item"><span class="rule-num">4.</span>Dips — 2 working sets, 8–12 reps, RPE 6–7</div>
+      <div class="rule-item"><span class="rule-num">5.</span>Shoulder press — 2 working sets, 8–12 reps, RPE 6–7</div>
+      <div class="rule-item"><span class="rule-num">6.</span>Bicep curl — 2 working sets, 10–15 reps, RPE 7</div>
+      <div class="rule-item"><span class="rule-num">7.</span>Underhand curl — 2 working sets, 10–15 reps, RPE 7</div>
+      <div class="rule-item"><span class="rule-num">8.</span>Tricep extension — 2 working sets, 10–15 reps, RPE 7</div>
+      <div class="rule-item"><span class="rule-num">9.</span>Tricep pushdown — 2 working sets, 10–15 reps, RPE 7</div>
+      <div class="rule-item"><span class="rule-num">10.</span>Forearm curl + extension — 2 sets each, 12–20 reps</div>
+    </div>
+
+    <div class="ref-card" style="margin-bottom:16px;">
+      <h3>Safety & Recovery</h3>
+      <div class="rule-item"><span class="rule-num">1.</span>Warm up: 2 min arm swings + band pull-aparts + 2 × 5 scap pulls + 1 × 3 easy pull-ups. Never start cold.</div>
+      <div class="rule-item"><span class="rule-num">2.</span>Cool down: lat stretch (30 sec/side), doorway pec stretch, forearm flexor stretch.</div>
+      <div class="rule-item"><span class="rule-num">3.</span>Elbows break first. Medial elbow soreness = warning. De-escalate accessories before pull-up volume.</div>
+      <div class="rule-item"><span class="rule-num">4.</span>Hollow body is the form rule. If you can't hold it for the set, stop the set.</div>
+      <div class="rule-item"><span class="rule-num">5.</span>Pain vs fatigue: pump and burn are normal. Sharp shoulder/elbow/wrist pain is a stop signal.</div>
+      <div class="rule-item"><span class="rule-num">6.</span>Sleep 7–9 hours. Pull-up gains are heavily neural.</div>
+      <div class="rule-item"><span class="rule-num">7.</span>Protein within 60 min post-session (~25–35 g).</div>
+      <div class="rule-item"><span class="rule-num">8.</span>Don't grease-the-groove off-day pull-ups — disrupts the recovery curve.</div>
+      <div class="rule-item"><span class="rule-num">9.</span>If a retest comes in below target, repeat the prior phase's final week before progressing.</div>
+      <div class="rule-item"><span class="rule-num">10.</span>Wed gym day: run first, gym after. Don't pre-fatigue grip.</div>
+    </div>
+
+    <div class="ref-card">
+      <h3>Milestones</h3>
+      <div class="milestones-list" style="margin-top:8px;">
+        ${[
+          [3, '30 sec dead hang; hollow body held cleanly for 25 sec'],
+          [6, 'First retest: 8–9 strict reps'],
+          [9, '6 × 6 strict pull-ups across a session, all clean'],
+          [10, 'Recovery. No elbow grumbles.'],
+          [12, 'First chest-to-bar contact (band-assisted is fine)'],
+          [14, 'Second retest: 11–12 strict reps'],
+          [17, 'Cluster set: 8 + 2 with 20 sec rest'],
+          [18, '3 × 10 strict pull-ups across a session'],
+          [20, '15 clean strict reps · stretch: first 3 to chest-to-bar 🏁'],
+        ].map(([w, t]) => `<div class="milestone-row">
+          <div class="ms-week">Week ${w}</div>
+          <div class="ms-target">${escapeHtml(t)}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function updateProgress() {
+  const { done, total } = getTotalProgress();
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-text').textContent = `${done} / ${total} sessions completed`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+function renderAll() { renderSidebar(); renderMain(); }
+loadLogs();
+renderAll();
+</script>
+</body>
+</html>
