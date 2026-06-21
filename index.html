@@ -452,6 +452,7 @@
     <div class="header-right">
       <button class="tab-btn active" onclick="showTab('plan')">Plan</button>
       <button class="tab-btn" onclick="showTab('reference')">Reference</button>
+      <button class="tab-btn" onclick="exportCSV()" title="Download all logged sessions as CSV">⬇ Export CSV</button>
     </div>
   </header>
 
@@ -1106,6 +1107,80 @@ document.getElementById('modal-overlay').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
 });
+
+// ─── CSV Export ───────────────────────────────────────────────────────────────
+
+function csvCell(v) {
+  if (v == null) return '';
+  const s = String(v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function exportCSV() {
+  const headers = [
+    'date', 'week', 'phase', 'day', 'day_label', 'recovery_week',
+    'pullup_prescribed', 'pullup_detail', 'pullup_notes',
+  ];
+  for (const lift of ACCESSORY_LIFTS) {
+    headers.push(`${lift.key}_sets`, `${lift.key}_reps`, `${lift.key}_weight`, `${lift.key}_notes`);
+  }
+  headers.push('overall_notes', 'completed_at');
+
+  const rows = [headers];
+  const entries = [];
+  for (let w = 1; w <= 20; w++) {
+    const wk = WEEKS[w];
+    for (let i = 0; i < wk.workouts.length; i++) {
+      const entry = logs[logKey(w, i)];
+      if (!entry) continue;
+      entries.push({ week: w, dayIndex: i, wk, wo: wk.workouts[i], entry });
+    }
+  }
+  entries.sort((a, b) => {
+    const da = a.entry.date || '';
+    const db = b.entry.date || '';
+    if (da !== db) return da < db ? -1 : 1;
+    if (a.week !== b.week) return a.week - b.week;
+    return a.dayIndex - b.dayIndex;
+  });
+
+  for (const { week, wk, wo, entry } of entries) {
+    const row = [
+      entry.date || '',
+      week,
+      wk.phase,
+      wo.day,
+      wo.label,
+      wk.recovery ? 'yes' : 'no',
+      wo.pullup || '',
+      wo.pullupDetail || '',
+      entry.pullupNotes || '',
+    ];
+    for (const lift of ACCESSORY_LIFTS) {
+      const d = (entry.lifts && entry.lifts[lift.key]) || {};
+      row.push(d.sets || '', d.reps || '', d.weight || '', d.notes || '');
+    }
+    row.push(entry.overallNotes || '', entry.completedAt || '');
+    rows.push(row);
+  }
+
+  if (entries.length === 0) {
+    alert('No logged sessions to export yet.');
+    return;
+  }
+
+  const csv = rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `pullup-plan-log-${stamp}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
